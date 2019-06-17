@@ -51,7 +51,10 @@ func (m *migration) Description() string {
 
 // Migrate executes the migration
 func (m *migration) Migrate(x *xorm.Engine) error {
-	return m.migrate(x)
+	log.Info("migration [%s]: started", m.description)
+	ret := m.migrate(x)
+	log.Info("migration [%s]: finished", m.description)
+	return ret
 }
 
 // Version describes the version table. Should have only one row with id==1
