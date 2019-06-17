@@ -51,6 +51,16 @@ RUN addgroup \
 ENV USER git
 ENV GITEA_CUSTOM /data/gitea
 
+RUN USER_DIRS="\
+        /data/git \
+        /data/gitea \
+        /data/gitea/log \
+        /data/gitea/conf \
+        /data/lfs \
+        " \
+&&  mkdir -p ${USER_DIRS} \
+&&  chown git:git ${USER_DIRS}
+
 VOLUME ["/data"]
 
 ENTRYPOINT ["/usr/bin/entrypoint"]
