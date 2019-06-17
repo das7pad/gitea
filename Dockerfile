@@ -53,6 +53,8 @@ ENV GITEA_CUSTOM /data/gitea
 
 RUN USER_DIRS="\
         /data/git \
+        /data/git/.ssh/ \
+        /data/git/repositories \
         /data/gitea \
         /data/gitea/log \
         /data/gitea/conf \
