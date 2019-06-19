@@ -521,8 +521,8 @@ func NewContext() {
 		createPIDFile(CustomPID)
 	}
 
-	log.Info("CustomConf: %s", CustomConf)
-	log.Info("LOCAL_ROOT_URL RAW: %s", Cfg.Section("server").Key("LOCAL_ROOT_URL"))
+	log.Error("CustomConf: %s", CustomConf)
+	log.Error("LOCAL_ROOT_URL RAW: %s", Cfg.Section("server").Key("LOCAL_ROOT_URL").String())
 
 	if com.IsFile(CustomConf) {
 		if err := Cfg.Append(CustomConf); err != nil {
@@ -618,7 +618,7 @@ func NewContext() {
 	}
 	LocalURL = sec.Key("LOCAL_ROOT_URL").MustString(defaultLocalURL)
 
-	log.Info("LOCAL_ROOT_URL MustString: %s", LocalURL)
+	log.Error("LOCAL_ROOT_URL MustString: %s", LocalURL)
 
 	RedirectOtherPort = sec.Key("REDIRECT_OTHER_PORT").MustBool(false)
 	PortToRedirect = sec.Key("PORT_TO_REDIRECT").MustString("80")
