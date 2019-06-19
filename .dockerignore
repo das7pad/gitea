@@ -1,0 +1,17 @@
+*
+
+!/main.go
+!/cmd
+!/models
+!/options
+!/public
+!/routers
+!/templates
+
+!/go.mod
+!/go.sum
+!/vendor
+
+!/docker/root
+
+!/Makefile
