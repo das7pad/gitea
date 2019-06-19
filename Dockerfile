@@ -20,12 +20,13 @@ COPY \
     Makefile \
     ${GOPATH}/src/code.gitea.io/gitea/
 
-RUN make clean generate
+RUN echo -e 'package main\nfunc main() {}' > main.go \
+&&  make clean generate
 
 COPY . ${GOPATH}/src/code.gitea.io/gitea/
 
 #Build gitea
-RUN make build
+RUN make generate build
 
 FROM alpine:3.9
 LABEL maintainer="maintainers@gitea.io"
