@@ -259,6 +259,8 @@ func runServ(c *cli.Context) error {
 		gitcmd = exec.Command(verb, repoPath)
 	}
 
+	os.Setenv("GITEA_CUSTOM", setting.CustomPath)
+	os.Setenv("GITEA_WORK_DIR", setting.AppWorkPath)
 	os.Setenv(models.ProtectedBranchRepoID, fmt.Sprintf("%d", results.RepoID))
 
 	gitcmd.Dir = setting.RepoRootPath
