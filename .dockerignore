@@ -3,6 +3,7 @@
 !/main.go
 !/cmd
 !/models
+!/modules
 !/options
 !/public
 !/routers
