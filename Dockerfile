@@ -8,15 +8,23 @@ ARG TAGS="sqlite sqlite_unlock_notify"
 ENV TAGS "bindata $TAGS"
 
 #Build deps
-RUN apk --no-cache add build-base git
+RUN apk --no-cache add build-base
 
-#Setup repo
-COPY . ${GOPATH}/src/code.gitea.io/gitea
 WORKDIR ${GOPATH}/src/code.gitea.io/gitea
 
-#Checkout version if set
-RUN if [ -n "${GITEA_VERSION}" ]; then git checkout "${GITEA_VERSION}"; fi \
- && make clean generate build
+COPY \
+    go.mod \
+    go.sum \
+    vendor \
+    Makefile \
+    ./
+
+RUN make clean generate
+
+COPY . ./
+
+#Build gitea
+RUN make build
 
 FROM alpine:3.9
 LABEL maintainer="maintainers@gitea.io"
