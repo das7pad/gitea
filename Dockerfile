@@ -3,7 +3,6 @@
 #Build stage
 FROM golang:1.12-alpine3.9 AS build-env
 
-ARG GITEA_VERSION
 ARG TAGS="sqlite sqlite_unlock_notify"
 ENV TAGS "bindata $TAGS"
 
@@ -21,9 +20,11 @@ COPY \
     ${GOPATH}/src/code.gitea.io/gitea/
 
 RUN echo -e 'package main\nfunc main() {}' > main.go \
-&&  make clean generate
+&&  GITEA_VERSION=0.0.0 make clean generate
 
 COPY . ${GOPATH}/src/code.gitea.io/gitea/
+
+ARG GITEA_VERSION
 
 #Build gitea
 RUN make generate build
