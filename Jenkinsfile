@@ -6,7 +6,7 @@ pipeline {
         IMAGES_BASE     = "golang:1.12-alpine3.9 alpine:3.9"
         IMAGE_BARE      = "$DOCKER_REGISTRY/gitea"
         IMAGE_BRANCH    = "$IMAGE_BARE:$BRANCH_NAME"
-        IMAGE           = "$IMAGE_BRANCH:$BUILD_NUMBER"
+        IMAGE           = "$IMAGE_BRANCH-$BUILD_NUMBER"
     }
     options {
         timestamps()
