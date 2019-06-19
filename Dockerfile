@@ -17,11 +17,11 @@ COPY \
     go.sum \
     vendor \
     Makefile \
-    ./
+    ${GOPATH}/src/code.gitea.io/gitea/
 
 RUN make clean generate
 
-COPY . ./
+COPY . ${GOPATH}/src/code.gitea.io/gitea/
 
 #Build gitea
 RUN make build
