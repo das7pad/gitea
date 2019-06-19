@@ -24,7 +24,7 @@ func hashAppToken(x *xorm.Engine) error {
 		Name           string
 		Sha1           string
 		Token          string `xorm:"-"`
-		TokenHash      string `xorm:"UNIQUE"`
+		TokenHash      string // sha256 of token - we will ensure UNIQUE later
 		TokenSalt      string
 		TokenLastEight string `xorm:"token_last_eight"`
 

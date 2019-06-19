@@ -18,13 +18,14 @@ import (
 
 	"code.gitea.io/gitea/models"
 	"code.gitea.io/gitea/modules/git"
+	"code.gitea.io/gitea/modules/log"
 	"code.gitea.io/gitea/modules/pprof"
 	"code.gitea.io/gitea/modules/private"
 	"code.gitea.io/gitea/modules/setting"
 
 	"github.com/Unknwon/com"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/mcuadros/go-version"
+	version "github.com/mcuadros/go-version"
 	"github.com/urfave/cli"
 )
 
@@ -65,6 +66,7 @@ func checkLFSVersion() {
 }
 
 func setup(logPath string) {
+	_ = log.DelLogger("console")
 	setting.NewContext()
 	checkLFSVersion()
 }
@@ -260,15 +262,6 @@ func runServ(c *cli.Context) error {
 	}
 
 	os.Setenv(models.ProtectedBranchRepoID, fmt.Sprintf("%d", results.RepoID))
-
-	envcmd := exec.Command("env")
-	envcmd.Dir = setting.RepoRootPath
-	envcmd.Stdout = os.Stderr
-	envcmd.Stdin = os.Stdin
-	envcmd.Stderr = os.Stderr
-	if err = envcmd.Run(); err != nil {
-		fail("Internal error", "Failed to execute env command: %v", err)
-	}
 
 	gitcmd.Dir = setting.RepoRootPath
 	gitcmd.Stdout = os.Stdout

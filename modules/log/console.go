@@ -42,7 +42,7 @@ type ConsoleLogger struct {
 func NewConsoleLogger() LoggerProvider {
 	log := &ConsoleLogger{}
 	log.NewWriterLogger(&nopWriteCloser{
-		w: os.Stderr,
+		w: os.Stdout,
 	})
 	return log
 }
