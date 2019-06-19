@@ -12,10 +12,11 @@ RUN apk --no-cache add build-base git
 
 WORKDIR ${GOPATH}/src/code.gitea.io/gitea
 
+COPY vendor ${GOPATH}/src/code.gitea.io/gitea/vendor/
+
 COPY \
     go.mod \
     go.sum \
-    vendor \
     Makefile \
     ${GOPATH}/src/code.gitea.io/gitea/
 
