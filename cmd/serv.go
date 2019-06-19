@@ -18,14 +18,13 @@ import (
 
 	"code.gitea.io/gitea/models"
 	"code.gitea.io/gitea/modules/git"
-	"code.gitea.io/gitea/modules/log"
 	"code.gitea.io/gitea/modules/pprof"
 	"code.gitea.io/gitea/modules/private"
 	"code.gitea.io/gitea/modules/setting"
 
 	"github.com/Unknwon/com"
 	"github.com/dgrijalva/jwt-go"
-	version "github.com/mcuadros/go-version"
+	"github.com/mcuadros/go-version"
 	"github.com/urfave/cli"
 )
 
@@ -66,7 +65,6 @@ func checkLFSVersion() {
 }
 
 func setup(logPath string) {
-	_ = log.DelLogger("console")
 	setting.NewContext()
 	checkLFSVersion()
 }
