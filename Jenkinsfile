@@ -26,10 +26,23 @@ pipeline {
                         | sed 's/^v//' \
                     )
                     docker build \
+                        --tag $IMAGE-build-env \
+                        --target build-env \
+                        --build-arg GITEA_VERSION=$GITEA_VERSION \
+                        .
+                    docker build \
                         --tag $IMAGE \
                         --build-arg GITEA_VERSION=$GITEA_VERSION \
                         .
                 '''
+            }
+            post {
+                cleanup {
+                    sh '''docker rmi \
+                        $IMAGE-build-env \
+                        --force
+                    '''
+                }
             }
         }
         stage('Push Docker Image') {
