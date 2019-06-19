@@ -521,6 +521,8 @@ func NewContext() {
 		createPIDFile(CustomPID)
 	}
 
+	log.Info("CustomConf: %s", CustomConf)
+
 	if com.IsFile(CustomConf) {
 		if err := Cfg.Append(CustomConf); err != nil {
 			log.Fatal("Failed to load custom conf '%s': %v", CustomConf, err)
