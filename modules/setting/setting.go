@@ -522,6 +522,7 @@ func NewContext() {
 	}
 
 	log.Info("CustomConf: %s", CustomConf)
+	log.Info("LOCAL_ROOT_URL RAW: %s", Cfg.Section("server").Key("LOCAL_ROOT_URL"))
 
 	if com.IsFile(CustomConf) {
 		if err := Cfg.Append(CustomConf); err != nil {
@@ -616,6 +617,9 @@ func NewContext() {
 		defaultLocalURL += ":" + HTTPPort + "/"
 	}
 	LocalURL = sec.Key("LOCAL_ROOT_URL").MustString(defaultLocalURL)
+
+	log.Info("LOCAL_ROOT_URL MustString: %s", LocalURL)
+
 	RedirectOtherPort = sec.Key("REDIRECT_OTHER_PORT").MustBool(false)
 	PortToRedirect = sec.Key("PORT_TO_REDIRECT").MustString("80")
 	OfflineMode = sec.Key("OFFLINE_MODE").MustBool()
