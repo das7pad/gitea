@@ -263,6 +263,15 @@ func runServ(c *cli.Context) error {
 	os.Setenv("GITEA_WORK_DIR", setting.AppWorkPath)
 	os.Setenv(models.ProtectedBranchRepoID, fmt.Sprintf("%d", results.RepoID))
 
+	envcmd := exec.Command("env")
+	envcmd.Dir = setting.RepoRootPath
+	envcmd.Stdout = os.Stderr
+	envcmd.Stdin = os.Stdin
+	envcmd.Stderr = os.Stderr
+	if err = envcmd.Run(); err != nil {
+		fail("Internal error", "Failed to execute env command: %v", err)
+	}
+
 	gitcmd.Dir = setting.RepoRootPath
 	gitcmd.Stdout = os.Stdout
 	gitcmd.Stdin = os.Stdin
