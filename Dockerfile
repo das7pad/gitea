@@ -8,7 +8,7 @@ ARG TAGS="sqlite sqlite_unlock_notify"
 ENV TAGS "bindata $TAGS"
 
 #Build deps
-RUN apk --no-cache add build-base
+RUN apk --no-cache add build-base git
 
 WORKDIR ${GOPATH}/src/code.gitea.io/gitea
 
