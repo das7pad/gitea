@@ -1,7 +1,7 @@
 
 ###################################
 #Build stage
-FROM golang:1.12-alpine3.9 AS build-env
+FROM golang:1.12-alpine3.10 AS build-env
 
 ARG TAGS="sqlite sqlite_unlock_notify"
 ENV TAGS "bindata $TAGS"
@@ -29,7 +29,7 @@ ARG GITEA_VERSION
 #Build gitea
 RUN make generate build
 
-FROM alpine:3.9
+FROM alpine:3.10
 LABEL maintainer="maintainers@gitea.io"
 
 EXPOSE 22 3000
