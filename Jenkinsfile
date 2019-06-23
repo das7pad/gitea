@@ -3,7 +3,7 @@ pipeline {
         label 'docker_builder'
     }
     environment {
-        IMAGES_BASE     = "golang:1.12-alpine3.9 alpine:3.9"
+        IMAGES_BASE     = "golang:1.12-alpine3.10 alpine:3.10"
         IMAGE_BARE      = "$DOCKER_REGISTRY/gitea"
         IMAGE_BRANCH    = "$IMAGE_BARE:$BRANCH_NAME"
         IMAGE           = "$IMAGE_BRANCH-$BUILD_NUMBER"
