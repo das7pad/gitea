@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'docker_builder'
+        label 'docker_builder && dedicated_cpu'
     }
     environment {
         IMAGES_BASE     = "golang:1.12-alpine3.10 alpine:3.10"
