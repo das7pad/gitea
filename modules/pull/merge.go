@@ -49,7 +49,6 @@ func Merge(pr *models.PullRequest, doer *models.User, baseGitRepo *git.Repositor
 	}
 
 	defer func() {
-		go models.HookQueue.Add(pr.BaseRepo.ID)
 		go models.AddTestPullRequestTask(doer, pr.BaseRepo.ID, pr.BaseBranch, false)
 	}()
 
@@ -102,7 +101,7 @@ func Merge(pr *models.PullRequest, doer *models.User, baseGitRepo *git.Repositor
 	}
 
 	// Fetch head branch
-	if err := git.NewCommand("fetch", remoteRepoName).RunInDirPipeline(tmpBasePath, nil, &errbuf); err != nil {
+	if err := git.NewCommand("fetch", remoteRepoName, pr.HeadBranch).RunInDirPipeline(tmpBasePath, nil, &errbuf); err != nil {
 		return fmt.Errorf("git fetch [%s -> %s]: %s", headRepoPath, tmpBasePath, errbuf.String())
 	}
 
@@ -231,7 +230,23 @@ func Merge(pr *models.PullRequest, doer *models.User, baseGitRepo *git.Repositor
 		}
 	}
 
-	env := models.PushingEnvironment(doer, pr.BaseRepo)
+	headUser, err := models.GetUserByName(pr.HeadUserName)
+	if err != nil {
+		if !models.IsErrUserNotExist(err) {
+			log.Error("Can't find user: %s for head repository - %v", pr.HeadUserName, err)
+			return err
+		}
+		log.Error("Can't find user: %s for head repository - defaulting to doer: %s - %v", pr.HeadUserName, doer.Name, err)
+		headUser = doer
+	}
+
+	env := models.FullPushingEnvironment(
+		headUser,
+		doer,
+		pr.BaseRepo,
+		pr.BaseRepo.Name,
+		pr.ID,
+	)
 
 	// Push back to upstream.
 	if err := git.NewCommand("push", "origin", pr.BaseBranch).RunInDirTimeoutEnvPipeline(env, -1, tmpBasePath, nil, &errbuf); err != nil {

@@ -10,6 +10,11 @@ function htmlEncode(text) {
 var csrf;
 var suburl;
 
+// Disable Dropzone auto-discover because it's manually initialized
+if (typeof(Dropzone) !== "undefined") {
+    Dropzone.autoDiscover = false;
+}
+
 // Polyfill for IE9+ support (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from)
 if (!Array.from) {
     Array.from = (function () {
@@ -396,18 +401,16 @@ function initCommentForm() {
             hasLabelUpdateAction = $listMenu.data('action') == 'update'; // Update the var
             if (hasLabelUpdateAction) {
                 var promises = [];
-                for (var elementId in labels) {
-                    if (labels.hasOwnProperty(elementId)) {
-                        var label = labels[elementId];
-                        var promise = updateIssuesMeta(
-                            label["update-url"],
-                            label["action"],
-                            label["issue-id"],
-                            elementId
-                        );
-                        promises.push(promise);
-                    }
-                }
+                Object.keys(labels).forEach(function(elementId) {
+                    var label = labels[elementId];
+                    var promise = updateIssuesMeta(
+                        label["update-url"],
+                        label["action"],
+                        label["issue-id"],
+                        elementId
+                    );
+                    promises.push(promise);
+                });
                 Promise.all(promises).then(reload);
             }
         });
@@ -1069,8 +1072,8 @@ function initPullRequestReview() {
         var ntr = tr.next();
         if (!ntr.hasClass('add-comment')) {
             ntr = $('<tr class="add-comment">'
-                    + (isSplit ? '<td class="lines-num"></td><td class="add-comment-left"></td><td class="lines-num"></td><td class="add-comment-right"></td>'
-                               : '<td class="lines-num"></td><td class="lines-num"></td><td class="add-comment-left add-comment-right"></td>')
+                    + (isSplit ? '<td class="lines-num"></td><td class="lines-type-marker"></td><td class="add-comment-left"></td><td class="lines-num"></td><td class="lines-type-marker"></td><td class="add-comment-right"></td>'
+                               : '<td class="lines-num"></td><td class="lines-num"></td><td class="lines-type-marker"></td><td class="add-comment-left add-comment-right"></td>')
                     + '</tr>');
             tr.after(ntr);
         }
@@ -1272,6 +1275,7 @@ function initEditor() {
             $('.quick-pull-branch-name').hide();
             $('.quick-pull-branch-name input').prop('required',false);
         }
+        $('#commit-button').text($(this).attr('button_text'));
     });
 
     var $editFilename = $("#file-name");
@@ -1970,17 +1974,18 @@ $(document).ready(function () {
 
     // Highlight JS
     if (typeof hljs != 'undefined') {
-        hljs.initHighlightingOnLoad();
+        const nodes = [].slice.call(document.querySelectorAll('pre code') || []);
+        for (let i = 0; i < nodes.length; i++) {
+            hljs.highlightBlock(nodes[i]);
+        }
     }
 
     // Dropzone
-    var $dropzone = $('#dropzone');
+    const $dropzone = $('#dropzone');
     if ($dropzone.length > 0) {
-        // Disable auto discover for all elements:
-        Dropzone.autoDiscover = false;
+        const filenameDict = {};
 
-        var filenameDict = {};
-        $dropzone.dropzone({
+        new Dropzone("#dropzone", {
             url: $dropzone.data('upload-url'),
             headers: {"X-Csrf-Token": csrf},
             maxFiles: $dropzone.data('max-file'),
@@ -2008,7 +2013,7 @@ $(document).ready(function () {
                         });
                     }
                 })
-            }
+            },
         });
     }
 
@@ -2106,12 +2111,16 @@ $(document).ready(function () {
     });
 
     $('.issue-action').click(function () {
-        var action = this.dataset.action
-        var elementId = this.dataset.elementId
-        var issueIDs = $('.issue-checkbox').children('input:checked').map(function() {
+        let action = this.dataset.action;
+        let elementId = this.dataset.elementId;
+        let issueIDs = $('.issue-checkbox').children('input:checked').map(function() {
             return this.dataset.issueId;
         }).get().join();
-        var url = this.dataset.url
+        let url = this.dataset.url;
+        if (elementId === '0' && url.substr(-9) === '/assignee'){
+            elementId = '';
+            action = 'clear';
+        }
         updateIssuesMeta(url, action, issueIDs, elementId).then(reload);
     });
 
@@ -2847,6 +2856,7 @@ function initTopicbar() {
 
     topicDropdown.dropdown({
         allowAdditions: true,
+        forceSelection: false,
         fields: { name: "description", value: "data-value" },
         saveRemoteData: false,
         label: {
@@ -2864,17 +2874,49 @@ function initTopicbar() {
             throttle: 500,
             cache: false,
             onResponse: function(res) {
-                var formattedResponse = {
+                let formattedResponse = {
                     success: false,
                     results: [],
                 };
+                const stripTags = function (text) {
+                    return text.replace(/<[^>]*>?/gm, "");
+                };
+
+                let query = stripTags(this.urlData.query.trim());
+                let found_query = false;
+                let current_topics = [];
+                topicDropdown.find('div.label.visible.topic,a.label.visible').each(function(_,e){ current_topics.push(e.dataset.value); });
 
                 if (res.topics) {
-                    formattedResponse.success = true;
-                    for (var i=0;i < res.topics.length;i++) {
-                        formattedResponse.results.push({"description": res.topics[i].Name, "data-value": res.topics[i].Name})
+                    let found = false;
+                    for (let i=0;i < res.topics.length;i++) {
+                        // skip currently added tags
+                        if (current_topics.indexOf(res.topics[i].Name) != -1){
+                            continue;
+                        }
+
+                        if (res.topics[i].Name.toLowerCase() === query.toLowerCase()){
+                            found_query = true;
+                        }
+                        formattedResponse.results.push({"description": res.topics[i].Name, "data-value": res.topics[i].Name});
+                        found = true;
                     }
+                    formattedResponse.success = found;
                 }
+
+                if (query.length > 0 && !found_query){
+                    formattedResponse.success = true;
+                    formattedResponse.results.unshift({"description": query, "data-value": query});
+                } else if (query.length > 0 && found_query) {
+                    formattedResponse.results.sort(function(a, b){
+                        if (a.description.toLowerCase() === query.toLowerCase()) return -1;
+                        if (b.description.toLowerCase() === query.toLowerCase()) return 1;
+                        if (a.description > b.description) return -1;
+                        if (a.description < b.description) return 1;
+                        return 0;
+                    });
+                }
+
 
                 return formattedResponse;
             },
