@@ -5,7 +5,7 @@ var urlsToCache = [
   '{{StaticUrlPrefix}}/vendor/plugins/jquery/jquery.min.js?v=3.4.1',
   '{{StaticUrlPrefix}}/vendor/plugins/jquery-migrate/jquery-migrate.min.js?v=3.0.1',
   '{{StaticUrlPrefix}}/vendor/plugins/semantic/semantic.min.js',
-  '{{StaticUrlPrefix}}/js/index.js?v={{MD5 AppVer}}',
+  '{{StaticUrlPrefix}}/js/index.js',
   '{{StaticUrlPrefix}}/js/draw.js',
   '{{StaticUrlPrefix}}/vendor/plugins/clipboard/clipboard.min.js',
   '{{StaticUrlPrefix}}/vendor/plugins/gitgraph/gitgraph.js',
@@ -28,18 +28,12 @@ var urlsToCache = [
   '{{StaticUrlPrefix}}/vendor/plugins/gitgraph/gitgraph.css',
   '{{StaticUrlPrefix}}/vendor/plugins/tribute/tribute.css',
   '{{StaticUrlPrefix}}/vendor/plugins/semantic/semantic.min.css',
-  '{{StaticUrlPrefix}}/css/index.css?v={{MD5 AppVer}}',
+  '{{StaticUrlPrefix}}/css/index.css',
   '{{StaticUrlPrefix}}/vendor/plugins/highlight/github.css',
   '{{StaticUrlPrefix}}/vendor/plugins/jquery.minicolors/jquery.minicolors.css',
   '{{StaticUrlPrefix}}/vendor/plugins/jquery.datetimepicker/jquery.datetimepicker.css',
   '{{StaticUrlPrefix}}/vendor/plugins/dropzone/dropzone.css',
-{{if .IsSigned }}
-	{{ if ne .SignedUser.Theme "gitea" }}
-		'{{StaticUrlPrefix}}/css/theme-{{.SignedUser.Theme}}.css',
-	{{end}}
-{{else if ne DefaultTheme "gitea"}}
-	'{{StaticUrlPrefix}}/css/theme-{{DefaultTheme}}.css',
-{{end}}
+  '{{StaticUrlPrefix}}/css/theme-arc-green.css',
 
   // img
   '{{StaticUrlPrefix}}/img/gitea-sm.png',
