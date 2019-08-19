@@ -49,6 +49,9 @@ func NewFuncMap() []template.FuncMap {
 		"StaticUrlPrefix": func() string {
 			return setting.StaticURLPrefix
 		},
+		"ServiceworkerURL": func() string {
+			return setting.StaticURLPrefix + "/serviceworker.js"
+		},
 		"AppUrl": func() string {
 			return setting.AppURL
 		},
