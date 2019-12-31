@@ -32,5 +32,8 @@
     "last 2 firefox versions",
     "last 2 safari versions",
     "ie 11"
-  ]
+  ],
+  "dependencies": {
+    "fomantic-ui": "2.8.3"
+  }
 }
