@@ -25,16 +25,14 @@
     "terser-webpack-plugin": "2.2.1",
     "updates": "9.3.0",
     "webpack": "4.41.2",
-    "webpack-cli": "3.3.10"
+    "webpack-cli": "3.3.10",
+    "fomantic-ui": "2.8.3",
+    "gulp": "4.0.2"
   },
   "browserslist": [
     "> 1%",
     "last 2 firefox versions",
     "last 2 safari versions",
     "ie 11"
-  ],
-  "dependencies": {
-    "fomantic-ui": "2.8.3",
-    "gulp": "4.0.2"
-  }
+  ]
 }
